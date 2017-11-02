@@ -1,35 +1,35 @@
 package XudongYu;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class create_trie_tree {
-    public static TrieNode create (String path, HashMap map, HashMap map_Of_Result) {
+    public static TrieNode create (String path, HashMap<String, List<String>> company_List, HashMap<String, Integer> map_Of_Result) {
         TrieNode root = new TrieNode();
         try {
             String line;
-
             BufferedReader d = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
             while ((line = d.readLine()) != null) {
                 String[] arr = line.split("\t");
-                /*for (String str : arr) {
-                    System.out.println(str);
-                }*/
+                company_List.put(arr[0], new ArrayList<String>());
+                //company_List.get(arr[0]).add(arr[0]);
                 TrieNode p = root;
-                String str = "";
-                for (char c : arr[0].toCharArray()) {
-                    if ((c -'a' >= 0 && c-'a' <=26) || (c -'A' >= 0 && c- 'A' <= 26) || c == ' ') {
-                        if (!p.children.containsKey(c)) {
-                            p.children.put(c, new TrieNode());
+                for (int i = 0; i < arr.length; ++i) {
+                    for (char c : arr[i].toCharArray()) {
+                        if (c == ' ' || Character.isLetterOrDigit(c)) {
+                            if (!p.children.containsKey(c)) {
+                                p.children.put(c, new TrieNode());
+                            }
+                            p = p.children.get(c);
                         }
-                        p = p.children.get(c);
-                        str += c;
                     }
+                    p.isWord = true;
+                    p = root;
+                    company_List.get(arr[0]).add(arr[i]);
+                    map_Of_Result.put(arr[i], 0);
                 }
-                p.isWord = true;
-                map.put(arr[0],0);
-                map_Of_Result.put(str, 0);
-
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
